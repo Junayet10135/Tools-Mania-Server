@@ -40,6 +40,7 @@ async function run (){
         await client.connect();
         const toolsCollection = client.db("tools_mania").collection("tools");
         const userCollection = client.db("tools_mania").collection("users");
+        const orderCollection = client.db("tools_mania").collection("orders");
 
         //Tools
         app.get('/tools', async (req, res) => {
@@ -54,6 +55,19 @@ async function run (){
             const query = { _id: ObjectID(id) };
             const tools = await toolsCollection.findOne(query);
             res.send(tools);
+        });
+
+        app.patch('/tools/:id',  async (req, res) => {
+            const id = req.params.id;
+            const quantity = req.body;
+            const filter = { _id: ObjectID(id) };
+            const updatedDoc = {
+                $set: {
+                    availableQuantity: quantity.restAvailableQuantity
+                }
+            }
+            const updatedBooking = await toolsCollection.updateOne(filter, updatedDoc);
+            res.send(updatedBooking);
         })
 
         //Users
@@ -74,7 +88,15 @@ async function run (){
             const result = await userCollection.updateOne(filter, updateDoc, options);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
             res.send({ result, token });
-        })
+        });
+
+        //Orders
+
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        });
     }
 
     finally{
