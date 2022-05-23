@@ -43,6 +43,19 @@ async function run (){
         const userCollection = client.db("tools_mania").collection("users");
         const orderCollection = client.db("tools_mania").collection("orders");
 
+        //verify Admin
+
+        const verifyAdmin = async (req, res, next) => {
+            const requester = req.decoded.email;
+            const requesterAccount = await userCollection.findOne({ email: requester });
+            if (requesterAccount.role === 'admin') {
+                next();
+            }
+            else {
+                res.status(403).send({ message: 'forbidden' });
+            }
+        }
+
         //Tools
         app.get('/tools', async (req, res) => {
             const query = {};
