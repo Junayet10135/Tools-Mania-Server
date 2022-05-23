@@ -74,6 +74,13 @@ async function run (){
         })
 
         //Tools
+
+        app.post('/tools', async (req, res) =>{
+            const tool = req.body;
+            const result = await toolsCollection.insertOne(tool);
+            res.send(result);
+        })
+
         app.get('/tools', async (req, res) => {
             const query = {};
             const cursor = toolsCollection.find(query);
