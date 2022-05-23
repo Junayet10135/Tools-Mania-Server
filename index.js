@@ -39,6 +39,7 @@ async function run (){
 
         await client.connect();
         const toolsCollection = client.db("tools_mania").collection("tools");
+        const reviewsCollection = client.db("tools_mania").collection("reviews");
         const userCollection = client.db("tools_mania").collection("users");
         const orderCollection = client.db("tools_mania").collection("orders");
 
@@ -69,6 +70,19 @@ async function run (){
             const updatedBooking = await toolsCollection.updateOne(filter, updatedDoc);
             res.send(updatedBooking);
         })
+
+        //Reviews
+
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        });
+
+        app.get('/review', async (req, res) => {
+            const reviews = await reviewsCollection.find().toArray();
+            res.send(reviews);
+        });
 
         //Users
 
