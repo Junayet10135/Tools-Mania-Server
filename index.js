@@ -3,6 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { ObjectID } = require('bson');
+const { verify } = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 5000;
@@ -153,6 +154,22 @@ async function run (){
             const orders = await orderCollection.find().toArray();
             res.send(orders);
         });
+
+        app.get('/order/:email',verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const email = req.params.email;
+            if (email === decodedEmail){
+                const query = { email: email }
+                const orders = await orderCollection.find(query).toArray();
+                res.send(orders);
+
+            }
+            else{
+                res.status(403).send({ message: 'forbidden' });
+            }
+        });
+
+
 
     }
 
