@@ -42,6 +42,7 @@ async function run (){
         const toolsCollection = client.db("tools_mania").collection("tools");
         const reviewsCollection = client.db("tools_mania").collection("reviews");
         const userCollection = client.db("tools_mania").collection("users");
+        const profileCollection = client.db("tools_mania").collection("profiles");
         const orderCollection = client.db("tools_mania").collection("orders");
 
         //verify Admin
@@ -138,6 +139,28 @@ async function run (){
                 $set: user,
             };
             const result = await userCollection.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+            res.send({ result, token });
+        });
+
+        //profile
+
+        app.get('/profile/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const profile = await profileCollection.findOne(filter);
+            res.send(profile);
+        });
+
+        app.put('/profile/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await profileCollection.updateOne(filter, updateDoc, options);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
             res.send({ result, token });
         });
