@@ -62,7 +62,7 @@ async function run (){
             const email = req.params.email;
             const filter = { email: email };
             const updateDoc = {
-                $set: { role: 'admin' },
+                $set: { role: 'admin'},
             };
             const result = await userCollection.updateOne(filter, updateDoc);
             res.send(result);
