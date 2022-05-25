@@ -178,6 +178,21 @@ async function run (){
             res.send(orders);
         });
 
+        app.get('/payment/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectID(id) };
+            const order = await orderCollection.findOne(query);
+            res.send(order);
+        })
+
+        app.delete('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectID(id) };
+            const order = await orderCollection.deleteOne(query);
+            res.send(order);
+        })
+
+
         app.get('/order/:email',verifyJWT, async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.params.email;
